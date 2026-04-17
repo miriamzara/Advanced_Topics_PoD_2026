@@ -1,0 +1,80 @@
+\chapter{Albert: First Module}
+
+
+\section{Introduction to Energy-Based Models}
+Today, we begin a new topic: \textbf{Energy-Based Models (EBMs)}. To understand these, we will first review the \textbf{Ising Model}, as we will rely heavily on these concepts later.
+
+In previous sessions, we focused on learning functions ($y$ given input $x$). Now, we want to learn distributions of variables $y$ given some parameters $\theta$. As physicists, we prefer to work with energies rather than probability densities. We write this distribution as:
+
+\[ P(y|\theta) = \frac{1}{Z(\theta)} e^{-\beta H(y; \theta)} \]
+
+\begin{itemize}
+    \item \textbf{$Z(\theta)$}: The normalization factor, known as the \textbf{partition function}. It contains the thermodynamics of the system and allows us to generate averages over variables.
+    \item \textbf{$\beta$}: The inverse temperature.
+    \item \textbf{$H$}: The \textbf{Hamiltonian}, which defines the model in terms of interactions between nodes.
+\end{itemize}
+
+\subsection{Goals of Energy-Based Models}
+There are two main applications we will focus on:
+\begin{enumerate}
+    \item \textbf{Associative Memory (Storage)}: Studying how networks store and retrieve data points. For example, if you are shown part of a picture, the network should "remember" and complete the rest. This is similar to a magnetic system where lining up a few spins causes the rest to follow.
+    \item \textbf{Generative Models}: Learning the underlying features that generate data distributions. The goal is not to remember individual points (which is overfitting), but to generate new realizations that look like the data (e.g., generating synthetic faces).
+\end{enumerate}
+
+---
+
+\section{The Ising Model}
+The Ising Model consists of a regular grid where each point has a binary variable $\sigma_i \in \{+1, -1\}$. The Hamiltonian is defined as:
+
+\[ H = -\frac{1}{2} \sum_{i,j} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i \]
+
+Where $J_{ij}$ represents the interaction between nodes $i$ and $j$, and $h_i$ is an external field. In a \textbf{ferromagnetic} model, $J > 0$, meaning the energy is lower when spins are aligned.
+
+\subsection{The Gibbs Ensemble and Thermodynamics}
+The statistics are described by the Gibbs distribution. The partition function $Z$ is calculated by summing over all possible configurations:
+
+\[ Z = \sum_{\{\sigma\}} e^{-\beta H} \]
+
+In the thermodynamic limit ($N \to \infty$), the Gibbs distribution can become non-unique. This occurs during a \textbf{phase transition}. Below a critical temperature, the system can be in an "all up" or "all down" state, separated by an energy barrier that scales with the system size $N$.
+
+\subsection{Mean Field Theory and Hubbard-Stratonovich}
+To study these phases, we introduce an order parameter: the \textbf{magnetization ($m$)}. We use the \textbf{Hubbard-Stratonovich transformation} to move from the discrete variables $\sigma$ to conjugate variables $m$.
+
+By integrating out the $\sigma$ variables, we derive the \textbf{Mean Field Free Energy} ($f(m)$). For a system where each spin interacts with many others (valid in dimensions $d > 4$), the free energy per node is:
+
+\[ f(m) = \frac{1}{2} \tilde{J} m^2 - \beta^{-1} \log \cosh(\beta (m + h)) \]
+
+Setting $\frac{df}{dm} = 0$ gives the self-consistency equation:
+\[ \tilde{J}m = \tanh(\beta(m + h)) \]
+
+The critical point occurs when the slopes of both sides are equal, specifically at $\tilde{J} = \beta$.
+
+\subsection{Transitions and Susceptibility}
+\begin{itemize}
+    \item \textbf{Second-Order Transition}: At $h=0$, the magnetization $m$ changes continuously as temperature $T$ crosses the critical point.
+    \item \textbf{First-Order Transition}: Occurs when crossing the transition line by changing $h$. The magnetization jumps discontinuously (e.g., from positive to negative), requiring a release of "latent heat."
+    \item \textbf{Susceptibility ($\chi$)}: Defined as $\frac{dm}{dh}$. It measures how responsive the system is to an external field. At the critical point, the curvature of the free energy becomes flat, causing the susceptibility (and fluctuations) to diverge toward infinity.
+\end{itemize}
+
+---
+
+\section{The Hopfield Model}
+The Hopfield Model generalizes the Ising model to a dense network where, in principle, every node can connect to every other node.
+
+\[ H = -\frac{1}{2} \sum_{i,j} J_{ij} \sigma_i \sigma_j \]
+
+\subsection{Hebbian Learning}
+To store $P$ data points (patterns) $\sigma^\alpha$, we define the interactions using the empirical covariance, known as \textbf{Hebbian Learning}:
+
+\[ J_{ij} = \frac{1}{P} \sum_{\alpha=1}^P \sigma_i^\alpha \sigma_j^\alpha \]
+
+This ensures that the stored data points $\sigma^\alpha$ are global minima of the energy landscape. However, this method can also create \textbf{spurious minima} (combinations of patterns).
+
+\subsection{The Mattis Model}
+If we generalize the binary data to continuous patterns $\xi$, we can write a more general Hamiltonian:
+
+\[ H = -\frac{1}{2P} \sum_{\alpha} \left( \sum_i \xi_i^\alpha \sigma_i \right)^2 - \frac{1}{\sqrt{NP}} \sum_\alpha h^\alpha \sum_i \xi_i^\alpha \sigma_i \]
+
+Here, the terms are scaled by $N$ (number of nodes) and $P$ (number of patterns) to ensure the Hamiltonian scales naturally with the system size. In the next session, we will use this to calculate the storage capacity of the Hopfield network.
+
+
