@@ -1,0 +1,353 @@
+\chapter{Byers II Module}
+
+
+\section{Lecture 5 - Differential geometry in ML}
+
+\subsection{Introductory example}
+
+When we think about mathematics, it has value in that we sort of can have very clearly defined true propositions. So we could say I can certainly write down some true propositions such as tautological things like 1=1, I could say obviously 2+2=4. And then I could say, oh, well, there's some obviously um counter examples. I could say it is false to say 1=100 or something, that doesn't make any sense. I can do 2+2=5, and we would all say, well, these are falsehoods. Right? Trivial. 
+
+But actually let me ask you, are there any ways that I could make the things on the false side true? What makes—what could have I assumed over here that I'm not telling you about maybe over here, or I assumed different things over here that were different from what was assumed there to make these true statements? Anybody have any idea? Sure.
+
+
+
+
+\begin{centering}
+\begin{verbatim}
+    True                         False
+
+    1 = 1                       1 = 100
+    2+2 = 4                     2 + 2 = 5
+\end{verbatim}
+\end{centering}
+Think of it from a physics standpoint. As physicists, why can I make the stuff on the right true, whereas a mathematician will be upset regardless, usually.
+
+'If they have large enough error bars, the result might be true.'
+
+Yeah, that's right. You could have errors and uncertainties. And in fact, on this bottom one here, that's what I could say, like this number and this number are drawn from a Gaussian. Maybe it's centered at 2 and has some sigma that has some width to it. And now it is actually possible for me to draw two numbers from a Gaussian and add them together and there is a way for me to reach five or—or within some bound of five, right? So 2+2=5 within the framework of probability and uncertainty is completely possible. Okay? 
+
+So what did it mean over here when I wrote 2+2=4 and thought it was a truth? What was I assuming about those numbers that we did not assume over there? Infinite precision? Right, we were assuming that the sigma here was implicitly going to zero. And so these numbers as real numbers were defined exactly. \textbf{In other words, these numbers had an infinite amount of information in them.} 
+
+And if that sounds weird and possibly bad, you're right. Okay? Every number you have, you probably learned this in your undergraduate physics lab, you never report a single number, you always report two numbers. You say, well, here is essentially something like the mean and here is essentially something like the standard deviation of the variance. 
+
+Now when you do mathematics and you represent numbers in the way mathematicians do, they tend not to think about that aspect of the number. But as physicists, natural scientists, people working with data in the world, we have to understand that uncertainty quantification is a very important part of our problem. And things that someone might say, well, that is a falsehood, aren't in the right context. Okay, so you got the slightly more complicated one right first. So how do I fix this one?
+
+'Units.'
+
+It's pretty silly, right? But it's not when you realize units matter. So when I use numbers in the world, I have to think about the units associated with them. Not just the uncertainties—that's important too—but the units. And imagine when I say I have to form a dimensionless constant and relate that to other dimensionless constants. In other words, I'm—I'm saying that for units that have dimensions and I have to combine them together in a way that perhaps the dimensions don't matter because they're arbitrary. You make up the dimensions. 
+
+\textbf{So anything you can make up, the world doesn't really care about. It has to be invariant to those choices. So there are certain symmetries inside of the representations of numbers that we use in physics to represent the world that we have to account for and understand.} So one meter of course is 100 centimeters. It's trivial, you know, to write it like this. It looks like a trick, but it—it suggests an important change of your mindset to realize units, dimensionality, uncertainty quantification change what you think is true and false in a very strict mathematical sense. It opens your mindset up. And that's exactly what differential geometry does on a wider scale. Okay? 
+
+
+
+\subsection{Differential geometry}
+I promise this is not a philosophical lecture. But let—I want to get our conceptual positioning correct. Okay? And so, this is a famous line about language. The famous philosopher Wittgenstein at Cambridge many years ago said: 
+
+\begin{centering}
+\begin{verbatim}
+'Philosophy is a battle against the bewitchment of our minds by language.' 
+\end{verbatim}
+\end{centering}
+Okay? And this is just saying this like you start to think the words are real and you project reality onto the representation and you can get lost in the representation. 
+
+Well, that is actually exactly what happened to physics prior to relativity. Physics became lost in the representations of the physics and didn't figure out how to abstract itself from those representations. And so, modifying what Wittgenstein said about um language, we can say that differential geometry is a battle against the bewitchment of our minds by coordinates. 
+
+So these coordinate systems, right? And it's important that we need coordinate systems, they are not the enemy of what we are doing, they are a vital tool to have coordinate systems and use them. But it is vital that you not create properties that are inside your coordinate system because you get to make up your coordinate system, right? You choose the coordinate system. You choose to switch coordinate systems. 
+
+Now what happens if the physics changed with your choice of coordinate system? This is a disaster. This means physics is not about the world, it's about stuff you choose in your head. And that's crazy. 
+
+And this is what Einstein was really battling with when he was trying to create relativity. The challenge of relativity was that, and certainly special relativity stayed fairly trapped within its coordinate systems. Okay, you could think in terms of essentially Cartesian coordinates and do all of special relativity. But when Einstein attempted to generalize special relativity to general relativity and say, well, now we're going to include um forces and more rigorously and things like gravity, a very distinct problem emerged is that they—you're trapped inside choices of coordinate systems and struggling to figure out what is the coordinate system artifacts and what is the physics that lives beyond the coordinate system. Okay? 
+
+You see the difference, right? There's many things you would calculate that you'd say: 'If I change coordinates, does this change too?' And does that change get reflected in the mathematics? So we have to be careful. Coordinate systems are very much like these choices of units or understanding whether the numbers we have have finite precision. \textbf{ Coordinate systems are also something that we assume and can build in artifacts and mistakes into our representations.} And I hope you start to see a hint of why this might matter in machine learning or data analysis.
+
+
+
+\subsection{Recap: ML turns probabilistic problems into geometrical problems}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B1_self_information_potential.png}
+    \label{fig:self_information_potential}
+    \caption{The self information potential $p_{similarity}(\mathbf{y}, \mathbf{y'})$ is the fundamental quantity}
+\end{figure}
+
+So let's remind ourselves. I—if you recall back,I was trying to say: 'Well, what is machine learning?'
+
+So you've been exposed to information theory—a very peculiar science, a very confusing in its own right. It always seems to have the answers but never tells you them. It's like an oracle. And I'll come to why information theory is later in another lecture—why information theory is so problematic. And it has to do with the fact that in the world you never have the probability distributions, you have the data. And information theory works perfectly if you have the probability distributions, but it doesn't work so well if you just have the data. And I can show you how to try to fix that so that you can use information theory in a practical sense with data, which is something evidently they never want to talk about in information theory courses. But anyway. 
+
+So this kind of information theoretic term, which is sometimes called, if you remember, the \textbf{self-information}. \textbf{I claimed in our discussion this is the smarter object to look at in many cases.} The probability itself is a little strange to think about. But this term, $-\log$, is actually more intuitive, especially for physicists, because this is essentially like a potential energy. \textbf{And it's the potential energy in which sits your data. And so this is the constraints that keeps your data organized in the space as if they were traveling particles doing Brownian motion traveling around in a potential.}
+\medskip \newline
+Now what does machine learning do? Machine learning says: 'Okay, I'm given this potential.' In fact, I would say any good physicist would probably do this too—Taylor expand it! Right? Let's expand this term and pick up the lead order term. Okay, the first non-trivial lead order term is this one where we say I've essentially expanded around some location and it's—it's like a harmonic oscillator, right? So from a physics standpoint, you should be like 'Sure.' This is a—a good starting point. The—it's like saying I have my potential that's holding my data together—let's imagine it's initially like a harmonic oscillator potential as the lead order non-trivial term of this expansion. 
+
+And so this is an approximation and you say: 'Ah, great. I can take this probability of similarity.' This is where the interpretive part of the problem comes in. 
+
+So what's happening is that the probability of similarity says that you give me an object, and you give me another object, and I have some measure of what I can see where I say: 'Are these objects similar or not with however I see them?' Okay. Um, if you remember in one of my earlier lectures, I called that \textbf{relevance}. What is the relevant thing I can see that's different? Because the brutal fact about all the data in the world is pretty much it's all different. 
+
+Every—you could tell almost—I could tell every one of these tiles apart from each other, right? Every one of these is unique in some way and they could be uniquely identified. All the tiles in all the buildings in all the world. Now the question is: 'In what task would that be relevant? Would it matter that I could tell every tile apart?' Now there are tasks where it matters that I could tell your fingerprints apart, right? Or your facial features, right? 
+
+So knowing that every one of you is different is important for some tasks. Other tasks I say: 'I detect a human, I detect a tile.' That is a sufficient level of classification. So it's relevant what task I do. 
+
+\textbf{So when I say similarity here, I'm saying similarity with respect to doing something. A choice about what you do.} So you can almost always with very sophisticated visual systems like we have, you can always see difference. The question is: 'You have to see the difference and figure out which differences matter.' And that's what a classifier is. A classifier is figuring out the differences that matter that you can see. If you can't see them, it's obviously hopeless, you can't use those features. 
+
+You want to say the distance—remember, machine learning is saying: 'I want to—probability's hard to work with. It's complicated computationally.' And what's—what's easy to work with? Remember, what is the—one of the fastest things we can do on computers? Numerical linear algebra. Okay? If you can convert a nasty probability problem into a numerical linear algebra problem, it's a big win—a very, very big win for you. And that's what machine learning exploits. It's one of its key differences with statistics, and why it came more from computer science. Computer scientists looked at large data sets and said: 'We will have to have computational efficiency,' and so how do you leverage things like numerical linear algebra? 
+
+So now we took a problem that was over in a probability space with a probability rules, which are actually quite inconvenient often to work through (you know, they're only two rules, right? in terms of marginalization and completeness and things, but it actually creates a kind of calculus mess over there). And so here, we said: 'Now it's just distance.' And then what we did was—see the script Y and the—the bold-faced Y—is somehow—I mean, what—if I tell you I'm going to do distances between things, what does that mean? 
+
+Well, it means they're \textbf{vectors}. They're like points in a space, like a vector space. And I say: 'Well, there's this rule, this Euclidean rule of take the coordinate'—and I'll say 'coordinate' with 'scare quotes' because of our differential geometry preamble—and we say: 'Okay, what is the distance between this point and this point just through the usual Euclidean way of subtracting the components-wise differences between each of those, and then we can add them up.' 
+
+And so now we have a—a way of saying: 'Ah, I can create a space that this is in, my data, where I've mapped the things themselves,' because \textbf{I'm sure you know tiles and pieces of chairs are not vectors. Right? But I can figure out funny ways to convert these into vectors}. Just like you do with a large language model turns bits of your speech and words into vectors and then processes on the vectors. All right? And \textbf{this is the embedding. And the embedding is the key step}. The vector space embedding of machine learning is critical. It's one of the more powerful aspects of what's going on, if it's done correctly. 
+
+And so now I can examine the distances between things and say: 'Ah, closeness in the space of features is um statistical similarity,' okay? 'And separation in that space represents statistical dissimilarity.' \textbf{But always remember: This was done with respect to something.} There was a task of some kind I was doing. \textbf{All that information is hidden inside what did you mean by the probability of similarity that was over there}. 
+
+All right. Now, this is reviewing what I talked about before, but I think it's actually—it can be a kind of confusing concept. And so, hopefully it's more clear the second time, in person, going through it. So I'm just going to pause a second and see if there are any objections, questions, anything about it or you're like: 'Hey, it's pretty clear what this is right now and why it's the entry point into the representations of machine learning.' Okay? 
+
+\textbf{Machine learning creates a geometry, but your statistical problems live more in a space of probability. And so we've got to get them out of there, because these are terribly hard problems over there. And now we're going to turn into these geometry problems with all sorts of crazy tricks, and then we'll transform them back out of the geometry back into the space of the predictions}, you know, to predict the next token in ChatGPT . 
+
+\subsection{Recap: the embedding and the crumpled paper analogy}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B1_crumbled_paper.png}
+    \label{fig:self_information_potential}
+\end{figure}
+
+
+And so it's like you've crumpled up a piece of paper
+I cannot go anywhere in the data and say: 'Oh, I believe \textit{this}
+
+\begin{equation}
+    -\log{p_{similarity}(\mathbf{y}, \mathbf{y'}) \sim || \mathbf{y} - \mathbf{y'}||^2}
+\end{equation}
+
+
+is true.' In other words, then it's just a giant ball with Euclidean measures everywhere. This is not the case. This is only true locally. Okay? And you might—you might very correctly ask the question: 'Well, what the hell does that mean? Locally. What's local? How do I figure out what local is?' It turns out that's kind of the real problem you're solving—is what does local mean? 
+
+\textbf{'Do I have enough data that I can believe in \textit{this}?}. \textit{This} is more of a belief that you can do this. Okay? It's sort of an ansatz or, you know, a postulate that you can do it.
+So it's just a normalization trick in machine learning when they do that. But it's like: 'Do I have enough data to believe that I can make this true?' And if I don't, I'll just find out I just have this high-dimensional noise ball that I can never quite figure out what's going on with. 
+
+
+
+\subsection{Data sufficiency is a \textit{local} question}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B1_data_sufficiency_local_question.png}
+    \label{fig:self_information_potential}
+\end{figure}
+
+\textbf{So what's the other thing they almost never talk about in machine learning? How do I figure out if I have enough data?} Did anyone ever explain that to you? How do you have enough data in machine learning? They have no idea. 
+
+But I'm saying now you actually have a way to think about this, and it's related to the differential geometry that we are coming to, which is essentially the closeness or the farness compared to the curvature of the thing. 
+
+So if the space is flat, then it probably doesn't take many points of data to sort of figure that out, right? So I have something here that's relatively flat sitting inside some space and maybe this thing here is lower dimensional than the space it's sitting in. Oops. Okay? But it's flat. If I believe it's flat, that's easy, right? Just a few points. But then this rule here applies everywhere in that space. You can use this all over this entire space. There's no problem. 
+
+Now the problem starts... now we've got a different sort of space. So we have something that's more like a manifold and it may be inside of RD, but then we have a question like: 'Okay, well in some sense that we'll talk about, the dimension of this might be little d, like this up here,' but we have, you know, curvature, right? And so how many points do I need to learn this object versus this object? 
+
+More. \textbf{This is a more complicated object. If you want to be more formal about it, it takes more parameters to identify this object than the number of parameters it takes to identify that object.}
+
+So on this object, \textit{this [Euclidean distance]} is not true everywhere. But where is it true? Tangent spaces.
+
+And that turns out to be what the essence of differential geometry is. It's very complicated objects embedded in a space, but the little pieces of the objects are like the Euclidean space you know and love. It turns out \textbf{manifolds are the most general place that you can still do calculus}. Those are the most general places that calculus is still functional in the form that you think of it from an undergraduate standpoint. 
+
+
+Well, I've worked 20 years in machine learning, and the first question everyone always asks is, you know, "I have X amount of data, is it enough?". I've no idea, right? How could I possibly know the answer? \textbf{Because it's not the amount of data you have, it's where the data is}
+
+So that's why you can't answer the question 'Is it enough data?' I have to say 'Given your embedding and understanding the amount of curvature in it, is the data placed correctly to find the structure that's hiding inside the embedding space?' All right. It just comes with the territory when \textbf{you say 'I turned my probability problem into a geometry problem' that, you know, nothing's quite for free. There's going to be some trouble that lives inside the other space, and curvature is kind of that trouble.}
+
+
+\medskip \noindent 
+
+So we've crumpled our paper — \textbf{and remember, in your data, you just have the points here, you don't have the paper. If you had the paper, your job would be easy} — just unfold the paper. 
+
+But the paper doesn't exist. \textbf{You have to infer the paper from the points}. But notice the trouble here is when the paper got crumpled, there's lots of points that became very close to each other, but they're on different pieces of the paper. I have to be able to figure out the difference, by following the underlying structure. The paper is the manifold. Okay? 
+
+And all I have is a point cloud. I have no manifold. \textbf{The manifold is a model concept. The data is what you have}. So, as I've already suggested here, we have a—a tool that we'll try to think about using—tangent spaces. And because on those tangent spaces, that's where the geometry actually works—on the tangent space. And so we have to be able to have the points to follow this around and then be able to say: 'Well, \textbf{how do I learn these tangent spaces?}
+
+So that's the—the primary connection between differential geometry and machine learning. They both are—they—the machine learning induces a geometry from its probabilistic kind of problem, it induces this geometry, but then that geometry um has to be learned from just a point cloud. It's just a bunch of points in a space, there's no topology to it, there's nothing, it's just points. 
+
+
+\begin{verbatim}
+QUESTION: "how lower dimensional are tangent spaces?' 
+'Is there a rule of thumb?' 
+\end{verbatim}
+
+No, I don't—but think of it this way. Think of the generative process that makes the data. And then ask how many parameters do you believe in are needed to be specified to make that data.  That is actually the dimensionality of the manifold the image sits on, in a sense.
+So when you look at this you go where is the real world? Where is the stuff I'm trying to understand versus where are my models of the stuff? Well, think of it like I have a data space here. And what happens is that sensors create giant data spaces. And you might say well that's inconvenient. We wish sensors didn't create giant data spaces for us. But that's not true. The sensor creates this giant data space $R_D$. Like think of a camera. So I have a camera, you know, that's like 1920 by 1080 pixels, you know like HD, three color depths... it's like 6 million you know numbers to represent that. You're like wow that is... that's a 6 million dimensional space if you want to think of it that way. 
+
+But remember very, very, very, very little of that space is actually used. Right? The space of natural images is like a wispy tiny thing hidden inside of that space that occupies very, very little of the actual space of all the dimensions that the sensor—the HD sensor—could actually see. And that's an important fact because you learn more from a sensor that could have seen anything but only saw this. That means that was like a lot of information content. Those choices—of what the sensor actually saw versus what it could have seen—is an incredible amount of information. 
+
+So, the downside of it is you're... you're stuck though in this data space that's huge. Think of it like in statistical mechanics, like a phase space or something for dynamics. It can be quite huge, right? Six to the $n$ number of particles. So it's this massive space over there. 
+
+But just like in physics and mechanics, you learn that there's only certain restrictions on that of the generative process, whether it's conservation of energy and how momentum works and symmetries like angular momentum. They all reduce the dimensionality and you can actually solve the problem because there's a model space that's lower dimensional so that you are not crushed by the curse of dimensionality. 
+
+So have you all heard of the curse of dimensionality? Well, the important thing is to understand where does the curse live. The curse of dimensionality is never in your data. If your data has a curse of dimensionality, you're screwed. There's nothing you can do. It's over. Give up. There's nothing to fix it. Okay? Curses of dimensionality happen in your model. Your model has lots of degrees of freedom you have to prune and control and manage. And so the curse of dimensionality in your model space though is about regularization, right? You've heard regularization, or having a Bayesian prior, you know, or something. Like the log of the... of the Bayesian prior is sort of like the regularization in your neural network or your... your machine learning problem. 
+
+And so over here in the model space you say well there's some sort of restriction that's going on here, and in large measure that's that dimensionality reduction we're talking about. How do we find that tangent space? How do we get down onto that manifold? How do we find the subspaces where that data really is living? Because those subspaces represent the fact that just in an example I was explaining to you about like the image of something, there's not that many parameters needed in the generation of the data, right? The sensor—the... the camera sensor—may have 6 million dimensions but I don't need 6 million dimensions—6 million parameters—to create the image. I may only need 50 parameters or 100 parameters. And that's the lower dimensional space that we're looking for here. 
+\medskip \newline
+
+
+\subsection{Locality and data attribution: Neural networks versus Kernel Methods}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B1_classical_ML_geom_schemes.png}
+\end{figure}
+
+
+\textbf{A neural network is a global fitting scheme, not a local fitting scheme.} So the neural network says: 'No, we're going to solve a problem this way.' It's going to chop the space up into half spaces essentially and talk about being on either side of those and it's almost like a zip code. To specify your position, you'll say you are on, you know, this side of that and that side of this and you'll sort of specify yourself essentially on the different sides of all these hyperplanes.
+
+But notice what that means. And this is why neural networks are very bad for experimental science. Can you tell me where I should get more data?  Like I go and I do my project and I find out unfortunately for whatever reason my analysis doesn't really come through with the data I have, but now I would like to do some experimental design. I would like to get more data. And well the question is: 'Well, where would it matter to get more data? Where in this space do you need more data?' 
+
+Well, if you're over here in this picture, where do I need more data? It's pretty clear. I'm tracking this curvature, I may not have enough data there and my local system here, like I didn't have enough points and I say 'Ah, I can't resolve this. It's just a ball. And this is just a noise ball here.  I did okay here, not good there.' So from an experimental design standpoint, I know where to go. 
+
+Now I'm over here with my neural network. How does it tell me where to add the points? I don't know. Because it's every one of these pieces of the model. \textbf{It's a global cut across the entire data space.} So it's very hard for me to do um assignment of data, to say \textit{what} about my data created \textit{what} about my model.
+
+I would claim you guys should be uncomfortable, somewhat unhappy with that approach and cautious. And the caution is that if I can't do data attribution and I can't do data sufficiency, well, you know what the next thing that I'm facing is? If I can't do those things, I can't do interpretation. 
+
+In things like, you know, physics and chemistry and biology and the things we do, we're not looking for inscrutable black box, we want interpretability even if you have pretty good performance in the algorithm. So neural networks are very unfriendly to interpretability because of these problems with data attribution and data sufficiency. 
+
+It's a geometric choice of how a neural network is constructed that creates this type of problem.
+
+
+\begin{verbatim}
+QUESTION: "'Could you maybe explain why the neural network is like slicing the space? 
+Because I mean if we have access to the slices then we could like define the density,
+and then we would know when we need data, right?
+ Like the amount of data we have per space and if the density is low.'
+\end{verbatim}
+
+
+
+It's this vector W points in a place. The position of this plane is set by this bias piece right here. So think of it as like—let's pick... I don't have colored chalk, so I apologize for that, I'll have to work with white. I'll—let me make this double arrow thing like that. This double arrow is really saying what—where is it through the transformation of the weights, right? So I'm saying this is kind of like this arrow and then this is sort of setting well along this line where do I cut it to put the plane where the variation of the plane—now it's not—I take your point, it's not strictly like oh there's this plane sitting there. 
+
+It's more like a plane that's blurred by the scale of the parameters of W. So it could become very blurred if the values here um become very large or it becomes very sharp. This allows you to do that. But what I'm pointing out is you—I mean you've seen this, this is the typical neural unit in your neural network, it's written this way, right? for a layer. And so this is the input layer, that's the output layer, so that's the input, that's the output. 
+
+And so now we say: 'Here I am on the one layer and then I come out the other layer,' but it's kind of this object that gives the game away—the dot. Sigma dot. This is coordinateized. So you go into the coordinates of that thing and you pick off the first coordinate and use it. And then you pick off the second one and use it. 
+
+So it's kind of like I line it up with something and then I cut, and I say all the data that's—figures out how to set the W and the B is the data on either side of where this arrow decided to point and where I would put the B. And so all the data on either side in principle, probably mostly near the boundary here, right here, that decides what happens here. So that cutting across the space is what creates the problem. 
+
+\textbf{In other words, it's not like oh there's just a certain compact set that is controlling what happens to this piece of a model. The volumes involved here are essentially infinite.}
+\medskip \newline
+If there were a machine learning professor sitting in here, they would say: 'Oh, you're just trying to resurrect kernel methods over here.'  \textbf{A kernel is in general a compact object that localizes what data is involved in the model. So the kernel approach is sort of like the other road to travel.}
+There's the neural network one, and then there's sort of the kernel-based approaches. And so I'm saying that the mathematics of understanding spaces is more aligned with kernels and those techniques than they are to neural networks. Even though machine learning and everything is mixed together and you can have kernels that live in neural networks in weird ways.
+\medskip \newline
+
+
+\subsection{We need to learn how to do \textit{local} PCA}
+
+
+But the difference is that PCA just does it on everything. It's kind of dumb. It just takes the entire data set and says fine, we'll just do this spectral... the singular value decomposition on it. We'll find the singular values that are bigger, we'll keep those, we'll throw away the smaller ones, and that creates a projection matrix and then creates a subspace. And the projection matrix takes the data and puts it down on something like this tangent space. 
+
+The problem is that if you did this for the entire data set, I mean what's going to happen? I mean it's kind of the wrong answer for all the data. It'll project it down but it'll destroy a lot of the intricate structure of your data. So the trick is: how do you do PCA in a slightly more intelligent way with a subset of the data? Okay? 
+
+But it's not, but fundamentally it's no different than what you did with PCA when you just did it to all the data and just kind of projected everything down. Now granted, if I had this example over here, PCA is fine. If I do PCA on that object globally, it's no big deal. It'll find exactly what you need. It's a linear object, no problem. But if I do PCA on an object that has curvature in it, I could have a serious problem because the projection isn't really capturing the geometry of the object. And from a machine learning standpoint, it's not preserving that Euclidean distance effect that we were counting on to be able to do things. Okay. 
+
+
+
+\section{Lecture 6: Differential geometry in ML, part II}
+
+\subsection{\textit{Remark}: ML was developed for tasks that are essentially different from those in the physical sciences}
+So think of it. A lot of those problems are things you can kind of just check because somehow magically your brain is very good at, um, computer vision and, um, natural language processing. Right? So you can show up and, and say, yeah, that's a good algorithm or a bad algorithm. But now, shift the context to science, engineering, uh, where you're, you're not, I mean if you knew the answer you wouldn't be doing the research. Right? And you're trying to use these kinds of algorithms and you're trying to also get some interpretation of the results of these, of the algorithm. And the, it's quite a big difference because in a lot of science and engineering problems the embedding space means something. It could be a phase space, in a mechanics problem, it could be a, a more, slightly more abstract space in a genomics light problem, biology, it could be an engineering problem where it's a configuration space of possible, um, states of a mechanical system. And these, these things are taking place even in real spatial dimensions with other metadata layered on top of it. 
+
+So that's why in one of the very first lectures over the, the Zoom ones, the first four I gave at the beginning, in one of those lectures I talked about how machine learning progressed from initially, um, having embedding spaces that were separately developed and then algorithms applied on top of them. That was the classical sort of machine learning world. But then deep learning was really the, the co-optimization of both embedding with the geometric algorithm on the vector space. Okay? And so now that's basically saying that you're saying I'm giving my algorithm the ability to change the geometry at will to support the problem it's doing. Now that is a huge difference. Okay? It means it's completely operationalized. It's, it's purely about optimizing a cost function now. So, let me tell you, if you want deep learning to be your problem, you better have really figured out your cost function because that's the only thing that connects your problem to what you're doing at that point. 
+
+But if you're doing a physics problem and you say, well there's some background to the problem I want to do, let me ask you: do you want to preserve it in the geometry of your problem or do you want to try to make sure it's hiding somewhere in the cost function of your problem? Okay? That's the key difference. So, if you're in science and engineering, you want to respect embedding spaces more than the computer scientist does who wants to build a computer vision system or a natural language processing system. So let me just stop a second, make sure because we're going off, I, I will be talking to you over the next weeks about a lot of elaborating on all sorts of things, but what I just said right now is actually a very important thing for you to understand why what you do is different than what many other people would do with something like machine learning. So, any questions before I head off into our lecture here? I hope that's explained why you don't see what I'm talking about in the atypical machine learning class. Because they're not concerned with science and engineering problems. Sometimes they say they are, but they're not really grappling with that problem. 
+
+Um, so imagine, you know, I know you and I worked on Transformers together. Um, so you're over in the Transformer world and we'll come and I'll give you a lecture about the Transformer, how it works in a large language model. But you will see one of the things it does, it has a zero respect for where the points are in the space. They are shoved around and that's the trick of it. It's sort of like saying the embedding space of language is so valuable and it's not like there's anything really there other than solving the problem that the Transformer's power is to say 'Yeah, your embedding was probably terrible but the goal of the attention mechanism, mechanism inside the large language model running the Transformer is to shove the points around in a way that makes the prediction of next token work better.' That's sort of no respect, almost, for the geometry, right? It's just saying it's a geometric transformation engine to solve a problem of predicting next token and that's what the cost function is, right? The cost function is be good at predicting the next token given the previous, you know, N buffer size of tokens. 
+
+So that's the extreme. And then the other way is to say 'No, I'm in a physical space like I'm in space-time or I'm in a, I'm in a, a coordinate system of an experiment and I want to infer, uh, the quantum mechanical potential sitting inside that space.' Okay? And then I have inputs in the, the geometry of my experiment and how am, my, the collection of my data. I have to respect that. I just can't shove everything around in some crazy way and say 'See, I'll get the answer or the answer.' I have to respect a lot about how the data was acquired. Does that... the two extremes. Yes, you could try to live in the middle, but it's saying I have a loss function but ask what the algorithm does. Does the algorithm have the ability to push the points around that you think are your data? And when that's true, you have to say, well maybe this algorithm is not quite fit for science and engineering applications but it's fit for telling dogs and cats apart or predicting what the next, you know, token in your chat is, right? 
+
+
+\subsection{\textit{Remark}: Noise is a \textit{modelling} choice}
+But I think I emphasized this before too is like remember there's no noise in the world. The world doesn't have noise, the world doesn't have your model in it either. These are conceptual tools for you organizing your data. Noise is a modeling concept, not a thing in the world. Okay? Because sometimes noise changes depending on what you're doing. You make a different choice for what your problem is and the noise becomes different too. So don't ever get confused that there's like oh there's signal in the world and there's noise in the world and these are things the world picks. They're things you pick with your brain based on the problem you do. 
+
+So when I say there's noise out in the codimensions perpendicular to this manifold, all I'm saying is I model it in some probabilistic way that doesn't cause me a lot of trouble. I say oh there's a Gaussian model that is that noise and I call the Gaussian model my noise in the problem, okay? So the next thing we want to know is how do we measure things. Remember this was the point of the geometrization of the data was that we said we don't want to do probability. Probability's hard. Probability calculus is difficult and, and expensive computationally. So we said hey I've got a great idea for machine learning which is instead I'll use numerical linear algebra because numerical linear algebra is one of the fastest things that we could run on a computer. 
+
+So how do we turn probability problems into linear algebra problems? If you can do it, it's incredibly smart because the payoff computationally is huge. All right? This is really important. So that is what machine learning is. It's replacing probability with numerical linear algebra but when you do that, it's really saying instead of computing probability, I'm going to compute a geometry and I'm going to use distances in the space of the geometry as a substitute for what I meant about the probabilities. 
+
+
+\subsection{The metric tensor}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B6_metric_tensor.png}
+\end{figure}
+
+
+Now, if you have any awareness of general relativity, this is the same thing. This is the metric tensor just like they talk about in something like relativity or you talk about in certain other problems related to elasticity and things like that. So this metric tensor, you just sandwich it. Let me just break this down so you don't think it's any, it's nothing very mysterious about it. So, if I have some, some vector, I have a vector, it's an element of a vector space. And I'm saying this vector space is somehow sitting inside my bigger Rd space. And now I say okay I have the vector but how do you ever figure out what the length of that vector is? Well I can't with the tools just of what a vector space is, I can't tell you the length of the vector. That requires another concept, okay? A normed vector space is more information mathematically than just a regular vector space. 
+
+This metric tensor is a fancy way of helping specify that. 
+
+And then there's a matrix version of that G. I put that G in the middle and then I put this on the other side. So this is the metric tensor here. You can see it's just creating a sort of an internal structure to how I'm doing the dot product between the, the components of the vector. Okay, so it's not, it's nothing mysterious about it. But here's the interesting part. You're used to in a space saying 'well, okay, whatever, I, I put this object in here like that,' but what's interesting about what differential geometry does is this is position dependent. So that object, how that inner product takes place around the space, depends on which tangent space you're on. So if I go here and I say I'm doing this vector operation, it means that I have to say that this vector space actually is the tangent space of the manifold at some point P. Okay? And so I'm identifying it as I could have this crazy looking object, this manifold, but at every point I say there's a little piece of Euclidean space sort of glued there. 
+
+And the Euclidean space is your friend, right? It's not tricky. It's a friendly vector space that just sits at the point P and you can exploit the properties of it. And one of the properties is on that particular space at P, not P here but identify that it is something that changes as I move around in the space, that I can compute this norm on that vector space that is that tangent space. Okay, this is the central idea of how I measure things in this world of differential geometry. Okay? Is this all right? Is this okay? Any questions about it? Sure. Does the X in this case have to be a nearest point? 
+
+
+Got it? Helpful? Now, now let's say I had those vectors here and then I go over here to Q. Now I'm at TqM and you say 'well then I say oh well I have a vector here and I would like to know the inner product between a vector, uh, W that's an element of that space as compared to a vector V that's an element of this space.' And you'd say well how the hell do you do that? Right? Because they are... that's a different vector space than this one. And so as a part of what goes on in a lot of differential geometry, a very important aspect of it is what's called parallel transport. So it's the notion of how do I take vectors that sit on this complicated object and how do I move them around so that I could compare them? And it's not trivial. Okay that's not trivial at all. And so how you do the transport of this along the manifold is sort of saying 'well how do I make this sit in a... they have to sort of be in the same vector space somehow.' So I either have to figure out how do I parallel transport this vector V over to W and then use that rule, using the G over here? There's going to be a Gq here, there's going to be a Gp over here. 
+
+And the variation of this metric tensor as you move around the space, that ends up derivatives of it that define what curvature is. That's the curvature, it's representing the curvature of the object we're talking about. But it also represents how do we figure out geodesics. We've all heard of a geodesic, right? It's the minimum distance like between P and Q, what is the minimum distance using this kind of scheme of measuring the DS squares as I move along the surface? Okay so imagine I have little pieces and I add them all up like DS squared like you did in calculus and I say what is the minimum of that so I go from P to Q and the minimum distance possible. And if you find that object, you solve the, solve that extremal problem, that is called the geodesic path. Okay? In general relativity those are the paths that light and matter move on, for instance, given the G you solve for Einstein's equations. Just as an aside about that. Okay, I think I've got this. This question got dumped. 
+
+Yeah and so now I can define vector fields on manifolds. Okay? But it says 'well they are vectors only on each of the tangent spaces.' You know there's a complicated concept called a tangent bundle that I'm not going to get into it right here but the tangent bundle and doing sections of it shows you how you put vector fields on objects like this. So it really is, the manifold is kind of the last place where you get to use all the stuff you learned in vector calculus. All that, all the differentiation and integration and all those kinds of things, they still work on these objects. They're kind of the last place they do. 
+
+Okay. So, so from here, that was the metric tensor, but we also might want the coordinate systems. And remember when you're doing machine learning you often don't really learn the coordinate systems of something either. And so for a real problem you might say 'yes, as a part of it the charts, remember charts, these are these maps from the object itself out in...' actually let me squish this. So this was the key construction in differential geometry which was remember we wanted to figure out how to, um, make observations about reality. Okay, my reality in scare quotes I just mean things that are not contaminated by choices we make. Right? If we're talking about things where if I make a different choice in how I represent it then I somehow magically claim the thing I'm looking at is somehow different. That's crazy. Right, that's a crazy theory, that's a terrible way to do things. 
+
+But physics is the exemplar of stepping back and figuring out as I mentioned earlier like Einstein struggling this with for like three years, figuring out that no, the answer is you always will have to have coordinates. You can't escape the coordinates. What we can do is always ask that when we put different coordinates onto our problem, the transformation between the, the coordinates leaves invariant the things we're claiming about the, the manifold world up here. And so by being able to say there are objects that the, the, you know, the chart transi- chart transition maps leave invariant when you look at them on the manifold, tells us these are like real objects. These are the things we should be talking about in physics or whatever problem we're doing. 
+
+And this is, just knowing that one thing to keep an eye on in your problem is a, is a big help for a lot of the, the people using machine learning. This is not a concept in the machine learning world that they like to really think about. Okay, this equivariance of representation problem. But in physics and engineering, the objects that can live up here and obey this notion of being able to withstand the, uh, chart transition maps and being invariant to them, remember I told you what they are: those are the tensors. That's what tensors are. That's why everyone will talk about tensors and vectors are just a, you know, a little small, a one-dimensional version of a tensor. But this is why tensors show up so much and why they're so important. They're the objects that survive the chart transition maps here and are candidates to actually be up there on the, the manifold, you know, the, the plane of reality so to speak. 
+
+All right. So, this is good, right? So now what we're doing is we're saying let's think about well where does our machine learning problem live in all this fancy talk, right? So I'm making... I'm putting... I'm throwing a lot of complicated things out in front of you here. But it's like what work do they help us do? Well think about it. So here we are on our manifold, this is the low-dimensional object that we wish to learn. It is the lower-dimensional thing, it is little D-dimensional let's say. And then out here, here's our data space. So that data space is nominally, for simplicity, we just say it's a gigantic vector space for simplicity, Rd big D right here. And now this is a injective map, all right? It has to be an injective map because all of my model space cannot hit all of my data space or else what? I have a serious curse of dimensionality problem, right? So the whole point is it's injective so there's only a tiny bit of this space that that model space actually goes to. And that's a framework we sit within. 
+
+Okay? So this is called the extrinsic picture in differential geometry. We sort of make a giant box and we stick our manifold in there and we're talking about inside the giant box. There's an intrinsic picture where you never reference the giant box, you just say we're on the surface or the hypersurface of the manifold and we just talk about everything right there, we don't think about any other spatial dimensions. But for data processing, it's... we're already given this Rd space so it's better to think of it as we're in this giant box to start, okay? And so now it's easy to say like 'okay, here I have a coordinate system, here I have another coordinate system,' and these are going to Rd little D, okay? Where D is much less than large D when you do that transformation. 
+
+And now we ask the question about the chart transition map. So this is the same way to organize the pieces I showed you on the previous slide, but referencing what are you doing with respect to the components of your machine learning model. And so these are coordinate systems but it's very important to realize I have to be able to go back and forth because in a some sense I can't directly talk about that object with numbers, I always have to have a coordinate system. And when I go here and I say 'well what is a coordinate system?' It's really saying that I have a piece of Rd that I can send things to and do my accounting there. Right? That's where I track things. And so I have to be able to go back and forth in principle. So this has to be a diffeomorphism. I have to be able to go back and forth and has an inverse, so it's a bijection, but more than that it has a derivative either way. So if I do that, that means it's a diffeomorphism. 
+
+Okay? And if it's a diffeomorphism, it's really just saying this and the piece here, this patch I'm looking at the manifold, they are essentially the same object at that point. And so this is the notion that I'm mapping over to some space like our tangent space but making extended out as a coordinate system and that is the object that matters to us, that is our local coordinate system. It's important to realize I cannot use that coordinate system over the whole thing, okay? It is not a... there... if it is, if I can use the same coordinate system over the whole object and it had no sin- coordinate singularities, it means the two things are the same topologically. It means the thing is Rd, it isn't just like Rd, it is Rd. A sphere is not Rd, right? So I can't put a coordinate system over the surface of a sphere and cover everything. It has a singularity at one point on the sphere no matter how you work it. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B6_goal.png}
+\end{figure}
+
+All right. So this is a good object for you to be able to write down and reproduce and say 'All right, I understand the pieces, I understand like I'm just going backwards along these lines, it's just the inverse. This object here is the actual mapping between the Rd coordinates and the actual stuff in the as it sits in the data space.' So our goal of doing the machine learning part of a problem is figure out an approximation for this right here. This is our coordinate system that we can be in, this is how we can track our problem. And then out here this is where our actual data's sitting. And we're trying to figure out the mapping between the two by approximating that function there, but in a way that if we changed our coordinates and we're actually approximating this function here, what we're talking about is still equivariant, it's something real about the space. 
+
+Okay. I can see that I'm not at speed though, I think I'm going to have to... I'll pause at a certain point here and then I'll finish the second half of this maybe Tuesday, okay? All right. And I think I've already said this. This is an example that's good because this is... imagine I'm on a manifold and I claim that there's a dynamical process happening. Okay? So there's some kind of dynamics unfolding. But the dynamics is constrained to be on the manifold that we would also like to learn, okay? And so what that means is there's the... it's like an ordinary differential equation is hiding in our data somehow. 
+
+And so here is kind of an example where we could have a particular sort of function where we said I have a real number and it maps to somewhere on the manifold. So what does that mean? Well it means I have a one-dimensional object of one just a one real number line and that will tell me where I am on the manifold, but it's a one- as a one-dimensional object it just means it's a curve, it's just a curve sitting in the manifold and then by varying this num- this real number here, I travel around on the curve here on the manifold. And now the charts are when you say 'well here's one coordinate representation and then this is the image of the curve on the manifold in the chart' and that chart could be in Rd, right? But again it's just a one-dimensional line and I move this point along it as I vary the number here, it's like a parameter. 
+
+Similarly I could go into another chart and I could move along this version of it, but the point is this, this thing that happens out here on the manifold is like if I threw a rock in the room and we said 'well there's that rock that moved through the room' and now I say 'well that's kind of like what this is.' But now I could have different coordinate systems. I'll have a coordinate system and you have a coordinate system about how we measure the rock as it travels through the room. But regardless of that we should both arrive at the same physics and conclusions and we should be able to go between our coordinate systems, right? That's all that this part really means. 
+
+And so this is just taking that chart I showed you on the previous page to say 'oh let's just specialize this specifically for this curve through the manifold.' All right, it's just an example of doing things, but it's actually a very important example. I promise we'll put this up on the Moodle. I know the stuff from Tuesday is not on the Moodle yet, I promise we'll fix that. But this is like learning a dynamic trajectory that's that's moving along this line here but it's confined to this larger manifold and you have state transitions along the trajectory. So if you could learn this you say 'I get some data and I try to learn this line here, this line will actually be characterized by an ordinary differential equation that's sitting on a manifold.' That'll be what the answer's about. All right, let me not talk about that, I already have. 
+
+So the problems that we're we're facing here that we need to solve are related around some key questions. And so we're going to have to try to answer these questions in our progress. First, does it matter how we select the base point? Right, where is the point we build the tangent space from? Well, in some way we're going to have to build it in all sorts of places, right? Because we have to cover our manifold. So this one is actually perhaps not too hard because we just say 'well pick a bunch of random points and let's see if we can create an overlapping set of charts that cover our manifold,' okay? That's kind of what this is about location. 
+
+Now this one, this is a more... these two are more subtle problems that require some some more sophistication to manage. Okay, what is the tangent space of P? So that's our TpM, that's our tangent space of the manifold at the point P, so we picked P so we're at P and we're trying to figure this problem out. Now, what is that problem? It's this it's finding this it's like dimensionality reduction, right? So it's it's like a PCA, principal component analysis, we're trying to do. But we have a little bit of a problem in our situation right here. You usually would do PCA on all of the data, right? It was a global PCA so it's everywhere. That is not going to work here, that is not a a good technique because we're like we're solving a local problem, we can't use all the data. 
+
+So now we have to say how do we do PCA to find this tangent space and the dimensionality of it, but we have a finite number of samples, okay? We only have so many samples to use, we don't have the entire data set. So we have to actually confront the fact that we're going to have finite sampling noise when you try to do this, all right? 
+
+And finally and this gets to this question that we were talking about earlier about the size of of this. Like you asked the question earlier about well what vectors can I put together? Well the mathematician's answer is that well they have to do what I said. They have to be at that point, they're at that point, if they're another point, no way, you have to like do all this parallel transport, okay? But when you're using a point cloud it's a little bit fuzzier, okay? And so you can ask over what region here would I pretty much say that this tangent space model is a pretty good model over over a an area of this data? Okay? And that's just because I'm dealing with points, right? All I don't have a manifold, what I have is a bunch of points in a space. 
+
+And so I can ask about the scale here. So the scale is saying well maybe it's very flat where I am and so that tangent space actually is a really good approximation over a large area of that manifold. Okay so that local model answers the question over a significant area. Or, oppositely, it's in a very curved area, right? And the curvature says well the scale of where I can use that tangent space is actually quite small, okay? So I have to shrink it in quite a bit and reduce the scale to be able to to use that tangent space. But that's a function of the curvature of the manifold I'm using, all right? 
+
+So these three issues they can be... this first one can be addressed just by saying okay just pick enough points to cover the manifold. These two relate more towards computing relevant statistics about the point cloud locally, like the sample covariance matrix, okay? We'll take a look at that. I just wanted to remind you something I know you already know. You probably have done a singular value decomposition many times. And I'm just reminding you about it um so that we're on the same page or maybe there are my notation lines up with how your notation was in your courses. 
+
+And so the singular value decomposition just says I have some matrix, doesn't have to be square, just rectangular. For now let's say it's real, so it's a real rectangular matrix, you know, of R rows and C columns and and then I can factor this into a set of matrices. This one is this one is sort of like diagonal with some extra zeros probably depending on the how what the rectangular dimension of this is. And then I have these two matrices that will show me how these this object is in the row and in the column spaces of this, okay? So that's the general singular value decomposition. But for what we're doing we're really working with square matrices when we do covariance, okay? So we don't have a U and a V, we have our column space and our row space are the same dimension because it's square. 
+
+Okay? And so now we have an eigenvalue problem and we say here is our matrix, these are the eigenvectors U and then indexed to that is a set of scalars that are the eigenvalues. In this case I've not calling them singular values because it's a square matrix so I'll just say eigenvalue. And now we can rewrite this all these individual eigen problems for each eye, eigenvalue, into a matrix form, right? And we can see it just turns right back into the same structure except where U and U transpose are being used instead of U and V. And the Lambda is now diagonal and it's a diagonal containing the eigenvalues from largest to smallest typically when in an algorithm. 
+
+So hopefully we're all on the same page. The only thing that here that's worth noting is that in a lot of machine learning problems when you do this locally you're in this funny limit where big D, the dimensionality, maybe much larger than the number of samples you have. Okay? So this is potentially bad news but it actually is quite manageable. And all you have to realize is if you're doing this with covariance matrices well they have a big null space, right? They're they're degenerate, they have reduced rank. And so the rank is something to think about, I mentioned it last time, which is what is the effective dimensionality? You know what is the size of the um the rank of the space, the not, you know, the non-null space and it's really related number of samples because if I have three things three points how many dimensions am I kind of really effectively talk about three points being in? 
+
+Two dimensions, all right? There's no meaning to say I have three points but the three points I should talk about them being in a thousand dimensions. Now they may be three points that define a plane, a two-dimensional object, oriented in the embedding space. That's a different problem than what I'm describing here. I'm just saying let's try to go after and find the eigenvalues and then we'll talk about how do the points sit in the space as a separate problem, okay? So effectively this dimensionality says it's the minimum of the dimension you're in if that's true it's a full rank matrix, right? It's not degenerate. As the the null space there is nothing in the null space. But if it does have a null space like it's a low number of points sitting in very high dimensions, it's N minus one. 
+
+So just think about it, you know, if it's if it's two points it's a line, if it's three points it's a plane, if it's four points it's a solid a tetrahedral object. So it's always the number of points minus one is the effective dimensionality of the points themselves sitting in the space if you just look at them. All right. That's our nomenclature. And so I'm going to I'm going to finish on this because I think this is a good stopping point and then we can move on to our discussion of the project. But what we're going to try and do is as we track across here we're going to say well we we grow a ball in this region and we ask an interesting question. We say as we locally grow a ball, a neighborhood, as we look at our data, we want to look at the eigenvalue spectrum like I was just talking about, the output of the singular value decomposition of the covariance. Here's the here's the sample covariance, right? Here's our data transposed with our centered data divided by number of samples. 
+
+And now we're going to look at the eigenvalue spectrum. So initially if I don't have enough points to say anything I think well I don't know I'm in N minus one dimensions or I'm in big D dimensions if I have more points than dimension. And that just means it's a noise ball, it's a full dimension noise ball. I don't see anything, I don't detect anything, I don't see a tangent space, I'm just temporarily stuck. But as I grow this ball and I get into more and more data, I should start to see a difference between the directions that are bounded in the codimension. Right if it's a manifold there'll be directions that are bounding me and then there'll be other directions I can grow into because they are along the manifold. 
+
+And so the growing of the ball will will detect a manifold by looking at the eigenvalue spectrum and what we're hoping for to see is an opening of a spectral gap. The spectral gap says there are some of these eigenvectors that are spreading out in directions of and those are the basis of the tangent space, okay? And then there's going to be the guys that are in the the codimension, the normal space to that and they're going to be the small eigenvalues. Well notice I've just I've retold the story from PCA for you, right? I just said PCA is like on the previous slide. PCA just ends up functioning as um this step here when you select a a little D dimension and so you go into this object here this is an orthonormal frame. Remember all those guys are orthogonal to each other and they're sort of making a basis sitting there in the space. 
+
+And I just say well I'm going to go out a certain number of these little D of them and I'm going to grab them and then use them to approximate my matrix. They'll be the U sub D right here. But these guys they will be the tangent vectors of of this space here. Okay? So but it's just in the before you're doing PCA over the whole thing you're saying well these are the dimension my data sits in all right? But now I'm just saying well if you did it locally you find the basis of our an orthonormal frame that forms a basis of our local tangent space. That's all. Hopefully you see that this is nothing crazy or different other than we just did it locally. And the trick is to figure out well how do you pull it off statistically with just a limited amount of data. That's the essence of what our problem turns into. We don't get to use all the data, we just use a little bit of the data, how do we solve the problem? 
+
+And so next time I will continue the story and we will talk about how do we figure out what this gap is. And and then the number of eigenvalues that sit above the gap is the dimensionality of our manifold and the basis of that tangent space is the U like I just showed you that is the first little D eigenvectors from the local SVD there, okay? So that's our agenda. So before I stop is there any, I hope at least I'm not saying I've answered how we do everything yet, at least you sort of understand the the trail we're on how we're trying to move along this trail and why. So any questions before I stop and we switch modes in the class? 
+
+Yes sir. Uh, maybe a last question. Oh no no no go go. Go. No I was wondering how do we go from the initial point that we choose using the covariance or Gram matrix to then increase the radius? So the distance from that point to find the different tangent spaces? I don't know there is something I don't understand about that. Okay, so so first I would say pick a random point in the space, a random point. Now at that point we we go to that point and then we run something preprocessing called like an approximate nearest neighbor search algorithm, an ANNS. And what that..."

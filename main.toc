@@ -18,3 +18,16 @@
 \contentsline {subsection}{\numberline {3.1.5}Data sufficiency is a \textit {local} question}{16}{subsection.3.1.5}%
 \contentsline {subsection}{\numberline {3.1.6}Locality and data attribution: Neural networks versus Kernel Methods}{19}{subsection.3.1.6}%
 \contentsline {subsection}{\numberline {3.1.7}We need to learn how to do \textit {local} PCA}{20}{subsection.3.1.7}%
+\contentsline {section}{\numberline {3.2}Lecture 6: Differential geometry in ML, part II}{21}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}\textit {Remark}: ML was developed for tasks that are essentially different from those in the physical sciences}{21}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}\textit {Remark}: Noise is a \textit {modelling} choice}{22}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}The metric tensor}{22}{subsection.3.2.3}%
+\contentsline {paragraph}{Parallel Transport}{23}{section*.2}%
+\contentsline {paragraph}{The metric tensor variation describes \textit {curvature}}{23}{section*.3}%
+\contentsline {paragraph}{Defining vector fields on manifolds: tangent bundles}{23}{section*.4}%
+\contentsline {paragraph}{Tensors are the \textit {real} things}{23}{section*.5}%
+\contentsline {subsection}{\numberline {3.2.4}Our intended pipeline to learn the manifold}{24}{subsection.3.2.4}%
+\contentsline {paragraph}{Spectral gap in the data covariance matrix}{25}{section*.6}%
+\contentsline {subsection}{\numberline {3.2.5}Q and A}{25}{subsection.3.2.5}%
+\contentsline {paragraph}{Q1}{25}{section*.7}%
+\contentsline {paragraph}{Q1}{25}{section*.8}%

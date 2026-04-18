@@ -243,3 +243,90 @@ But the difference is that PCA just does it on everything. It's kind of dumb. It
 The problem is that if you did this for the entire data set, I mean what's going to happen? I mean it's kind of the wrong answer for all the data. It'll project it down but it'll destroy a lot of the intricate structure of your data. So the trick is: how do you do PCA in a slightly more intelligent way with a subset of the data? Okay? 
 
 But it's not, but fundamentally it's no different than what you did with PCA when you just did it to all the data and just kind of projected everything down. Now granted, if I had this example over here, PCA is fine. If I do PCA on that object globally, it's no big deal. It'll find exactly what you need. It's a linear object, no problem. But if I do PCA on an object that has curvature in it, I could have a serious problem because the projection isn't really capturing the geometry of the object. And from a machine learning standpoint, it's not preserving that Euclidean distance effect that we were counting on to be able to do things. Okay. 
+
+
+
+\section{Lecture 6: Differential geometry in ML, part II}
+
+\subsection{\textit{Remark}: ML was developed for tasks that are essentially different from those in the physical sciences}
+So think of it. A lot of those (ML) problems are things you can kind of just check because somehow your brain is very good at computer vision natural language processing. Right? So you can show up and, and saY: yeah, that's a good algorithm or a bad algorithm. But now, shift the context to science, engineering,, where if you knew the answer you wouldn't be doing the research. Right? And you're trying to use these kinds of algorithms and you're trying to also get some interpretation of the results of these, of the algorithm. And the, it's quite a big difference.
+
+In a lot of science and engineering problems the embedding space means something. It could be a phase space, in a mechanics problem, it could be a, a more, slightly more abstract space in a genomics light problem, biology, it could be an engineering problem where it's a configuration space of possible, um, states of a mechanical system. And these, these things are taking place even in real spatial dimensions with other metadata layered on top of it. 
+
+So that's why in one of the very first lectures over the, the Zoom ones, the first four I gave at the beginning, in one of those lectures I talked about how machine learning progressed from initially, um, having embedding spaces that were separately developed and then algorithms applied on top of them. That was the classical sort of machine learning world. But then deep learning was really the, the co-optimization of both embedding with the geometric algorithm on the vector space. Okay? And so now that's basically saying that you're saying I'm giving my algorithm the ability to change the geometry at will to support the problem it's doing. Now that is a huge difference. Okay? It means it's completely operationalized. It's, it's purely about optimizing a cost function now. So, let me tell you, if you want deep learning to be your problem, you better have really figured out your cost function because that's the only thing that connects your problem to what you're doing at that point. 
+
+But if you're doing a physics problem and you say, well there's some background to the problem I want to do, let me ask you: do you want to preserve it in the geometry of your problem or do you want to try to make sure it's hiding somewhere in the cost function of your problem? Okay? That's the key difference. So, if you're in science and engineering, you want to respect embedding spaces more than the computer scientist does who wants to build a computer vision system or a natural language processing system. 
+
+\subsection{\textit{Remark}: Noise is a \textit{modelling} choice}
+But I think I emphasized this before too is like remember there's no noise in the world. The world doesn't have noise, the world doesn't have your model in it either. These are conceptual tools for you organizing your data. Noise is a modeling concept, not a thing in the world. Okay? Because sometimes noise changes depending on what you're doing. You make a different choice for what your problem is and the noise becomes different too. So don't ever get confused that there's like oh there's signal in the world and there's noise in the world and these are things the world picks. They're things you pick with your brain based on the problem you do. 
+
+So when I say there's noise out in the codimensions perpendicular to this manifold, all I'm saying is I model it in some probabilistic way that doesn't cause me a lot of trouble. I say oh there's a Gaussian model that is that noise and I call the Gaussian model my noise in the problem, okay? So the next thing we want to know is how do we measure things. Remember this was the point of the geometrization of the data was that we said we don't want to do probability. Probability's hard. Probability calculus is difficult and, and expensive computationally. So we said hey I've got a great idea for machine learning which is instead I'll use numerical linear algebra because numerical linear algebra is one of the fastest things that we could run on a computer. 
+
+So how do we turn probability problems into linear algebra problems? If you can do it, it's incredibly smart because the payoff computationally is huge. All right? This is really important. So that is what machine learning is. It's replacing probability with numerical linear algebra but when you do that, it's really saying instead of computing probability, I'm going to compute a geometry and I'm going to use distances in the space of the geometry as a substitute for what I meant about the probabilities. 
+
+
+\subsection{The metric tensor}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B6_metric_tensor.png}
+\end{figure}
+
+
+With the tools just of what a vector space is, I can't tell you the length of the vector. That requires another concept, okay? A normed vector space is more information mathematically than just a regular vector space. This metric tensor is a fancy way of helping specify that. 
+
+What's interesting about what differential geometry does is this is position dependent. So that object, how that inner product takes place around the space, depends on which tangent space you're on. So if I go here and I say I'm doing this vector operation, it means that I have to say that this vector space actually is the tangent space of the manifold at some point P. Okay? And so I'm identifying it as I could have this crazy looking object, this manifold, but at every point I say there's a little piece of Euclidean space sort of glued there. 
+
+And the Euclidean space is your friend, right? It's not tricky. It's a friendly vector space that just sits at the point P and you can exploit the properties of it. And one of the properties is on that particular space at P, not P here but identify that it is something that changes as I move around in the space, that I can compute this norm on that vector space that is that tangent space. Okay, this is the central idea of how I measure things in this world of differential geometry. 
+
+\paragraph{Parallel Transport}
+Got it? Helpful? Now, now let's say I had those vectors here and then I go over here to Q. Now I'm at TqM and you say 'well then I say oh well I have a vector here and I would like to know the inner product between a vector, uh, W that's an element of that space as compared to a vector V that's an element of this space.' And you'd say well how the hell do you do that? Right? Because they are... that's a different vector space than this one. And so as a part of what goes on in a lot of differential geometry, a very important aspect of it is what's called parallel transport. So it's the notion of how do I take vectors that sit on this complicated object and how do I move them around so that I could compare them? And it's not trivial. Okay that's not trivial at all. And so how you do the transport of this along the manifold is sort of saying 'well how do I make this sit in a... they have to sort of be in the same vector space somehow.' So I either have to figure out how do I parallel transport this vector V over to W and then use that rule, using the G over here? There's going to be a Gq here, there's going to be a Gp over here. 
+\paragraph{The metric tensor variation describes \textit{curvature}}
+And the variation of this metric tensor as you move around the space, that ends up derivatives of it that define what curvature is. That's the curvature, it's representing the curvature of the object we're talking about. But it also represents how do we figure out geodesics. om P to Q and the minimum distance possible. 
+\paragraph{Defining vector fields on manifolds: tangent bundles}
+Yeah and so now I can define vector fields on manifolds. Okay? But it says 'well they are vectors only on each of the tangent spaces.' You know there's a complicated concept called a tangent bundle that I'm not going to get into it right here but the tangent bundle and doing sections of it shows you how you put vector fields on objects like this. So it really is, the manifold is kind of the last place where you get to use all the stuff you learned in vector calculus. All that, all the differentiation and integration and all those kinds of things, they still work on these objects. They're kind of the last place they do. 
+
+
+\paragraph{Tensors are the \textit{real} things}
+Remember we wanted to figure out how to, um, make observations about reality. Okay, my reality in scare quotes I just mean things that are not contaminated by choices we make. 
+
+What we can do is always ask that when we put different coordinates onto our problem, the transformation between the, the coordinates leaves invariant the things we're claiming about the, the manifold world up here. And so by being able to say there are objects that the, the, you know, the chart transi- chart transition maps leave invariant when you look at them on the manifold, tells us these are like real objects. These are the things we should be talking about in physics or whatever problem we're doing. 
+
+But in physics and engineering, the objects that can live up here and obey this notion of being able to withstand the chart transition maps and being invariant to them, remember I told you what they are: those are the \textbf{tensors. That's what tensors are. This is why tensors show up so much and why they're so important. They're the objects that survive the chart transition maps here and are candidates to actually be up there on the, the manifold, you know, the, the plane of reality so to speak}. 
+
+\subsection{Our intended pipeline to learn the manifold}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/B6_goal.png}
+\end{figure}
+
+\begin{enumerate}
+    \item Location: where is the tangent space anchored?
+    \item Dimensionality: how can we reliably infer the dimension of tangent spaces from finite-sample data?
+    \item Scale: How large is the curvature of the manifold at that point? Therefore, how far from $P$ can we approximate $\mathcal{M}$ with that tangent space $T_p \mathcal{M}$?
+\end{enumerate}
+
+
+So now we have to say how do we do PCA to find this tangent space and the dimensionality of it, but we have a finite number of samples, okay? We only have so many samples to use, we don't have the entire data set. So we have to actually confront the fact that we're going to have finite sampling noise when you try to do this.
+
+And so I can ask about the scale here. So the scale is saying well maybe it's very flat where I am and so that tangent space actually is a really good approximation over a large area of that manifold. Okay so that local model answers the question over a significant area. Or, oppositely, it's in a very curved area, right? And the curvature says well the scale of where I can use that tangent space is actually quite small, okay? So I have to shrink it in quite a bit and reduce the scale to be able to to use that tangent space. But that's a function of the curvature of the manifold. 
+
+
+\paragraph{Spectral gap in the data covariance matrix}
+So these three issues they can be... this first one can be addressed just by saying okay just pick enough points to cover the manifold. These two relate more towards computing relevant statistics about the point cloud locally, like the sample covariance matrix, okay? We'll take a look at that. I just wanted to remind you something I know you already know. You probably have done a singular value decomposition many times. And I'm just reminding you about it um so that we're on the same page or maybe there are my notation lines up with how your notation was in your courses. 
+
+And now we're going to look at the eigenvalue spectrum. So initially if I don't have enough points to say anything I think well I don't know I'm in N minus one dimensions or I'm in big D dimensions if I have more points than dimension. And that just means it's a noise ball, it's a full dimension noise ball. I don't see anything, I don't detect anything, I don't see a tangent space, I'm just temporarily stuck. But as I grow this ball and I get into more and more data, I should start to see a difference between the directions that are bounded in the codimension. Right if it's a manifold there'll be directions that are bounding me and then there'll be other directions I can grow into because they are along the manifold. 
+
+And so the growing of the ball will will detect a manifold by looking at the eigenvalue spectrum and what we're hoping for to see is an opening of a spectral gap. The spectral gap says there are some of these eigenvectors that are spreading out in directions of and those are the basis of the tangent space. That's all. Hopefully you see that this is nothing crazy or different, other than we just did it locally. And \textbf{the trick is to figure out well how do you pull it off statistically with just a limited amount of data}. That's the essence of what our problem turns into. We don't get to use all the data, we just use a little bit of the data, how do we solve the problem? 
+
+
+\subsection{Q and A}
+
+
+\paragraph{Q1} Assuming you succeed in learning a set of local tangent planes, then how do you stick them all together?
+
+Let me do something naive that can still be very valuable: think of it as a lookup table. So if you say, well, I give a point and then I can say, "ah, in my lookup table now, I can say that point lives in this tangent space and it has this geometric structure." I don't necessarily have to stitch it all together. I mean, remember, machine learning has set a low bar. They don't... they don't do anything with the geometry whatsoever. And if I can at least tell you, give me some new point or say, "at this point in my data space is there a manifold? One?" and like data support, "is there anything there first?" And the other thing is, "okay, if there is something there, tell me about the degrees of freedom and how they sit within the overall space." That's actually pretty good as a starting point. But we'll come to this other question in just a little bit too. I agree, it is a hard question.
+
+\paragraph{Q1} In the landscape of state-of-the-art machine learning methods, is there already some well-defined, well-structured method that uses this way of thinking and was effectively been applied to a problem in the physical sciences?
+
+So, most of the work that goes on now is not geometric. If you go back though, twenty years, as more of the classical machine learning, that's where you did find the techniques like \textit{local linear embedding (LLE), Isomap, LTSA (Local Tangent Space Alignment)}.  So I sort of answered your question. Sort of. So it isn't... it's a little bit of an open topic, and it also, as it was developing, it all got steamrolled over by deep learning, because deep learning happened soon after those early innovations. So but I think it's time to kind of come back to it for science and engineering problems. 
